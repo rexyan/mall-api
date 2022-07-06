@@ -1,0 +1,11 @@
+
+# CLI tool, only in development environment.
+# https://goframe.org/pages/viewpage.action?pageId=3673173
+gfcli:
+  gen:
+    dao:
+      - link:            "mysql:root:123456@tcp(127.0.0.1:3306)/mall"
+        tables:          "tb_newbee_mall_admin_user,tb_newbee_mall_admin_user_token,tb_newbee_mall_carousel,tb_newbee_mall_goods_category,tb_newbee_mall_goods_info,tb_newbee_mall_index_config,,tb_newbee_mall_order,tb_newbee_mall_order_address,tb_newbee_mall_order_item,tb_newbee_mall_shopping_cart_item,tb_newbee_mall_user,tb_newbee_mall_user_address,tb_newbee_mall_user_token"
+        removePrefix:    "tb_newbee_mall_"
+        descriptionTag:  true
+        noModelComment:  true
