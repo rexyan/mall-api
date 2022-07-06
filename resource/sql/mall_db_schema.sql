@@ -1,7 +1,7 @@
 -- ----------------------------
 -- Copyright (c) 2019-2021 十三 all rights reserved.
 
-https://github.com/newbee-ltd/newbee-mall-api/blob/master/src/main/resources/newbee_mall_db_v2_schema.sql
+-- https://github.com/newbee-ltd/newbee-mall-api/blob/master/src/main/resources/newbee_mall_db_v2_schema.sql
 -- ----------------------------
 
 SET NAMES utf8mb4;
