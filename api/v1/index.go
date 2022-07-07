@@ -20,7 +20,7 @@ type GoodsItem struct {
 
 // 首页
 type IndexInfosReq struct {
-	g.Meta `path:"/api/v1/index-infos" tags:"Index" method:"get" summary:"首页"`
+	g.Meta `path:"index-infos" tags:"Index" method:"get" summary:"首页"`
 }
 
 type IndexInfosRes struct {
@@ -29,3 +29,4 @@ type IndexInfosRes struct {
 	IndexNewGoods       []GoodsItem         `json:"newGoodses"`
 	IndexRecommendGoods []GoodsItem         `json:"recommendGoodses"`
 }
+

@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"context"
+	"mall-api/internal/service"
 
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/net/ghttp"
@@ -21,7 +22,15 @@ var (
 				group.Middleware(ghttp.MiddlewareHandlerResponse, ghttp.MiddlewareCORS)
 				group.Bind(
 					controller.Index,  // 首页
+					controller.User,  // 用户
 				)
+
+				group.Group("", func(group *ghttp.RouterGroup) {
+					group.Middleware(service.Middleware().Auth)
+					group.Bind(
+						controller.Goods,   // 商品
+					)
+				})
 			})
 			s.Run()
 			return nil
