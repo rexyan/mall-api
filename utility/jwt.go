@@ -1,4 +1,4 @@
-package service
+package utility
 
 import (
 	"context"
@@ -7,6 +7,7 @@ import (
 	"github.com/gogf/gf/v2/net/ghttp"
 	"github.com/gogf/gf/v2/util/gconv"
 	v1 "mall-api/api/v1"
+	"mall-api/internal/service"
 	"time"
 )
 
@@ -88,7 +89,7 @@ func Authenticator(ctx context.Context) (interface{}, error) {
 		return "", err
 	}
 
-	if user := User().GetUserInfo(ctx, in.LoginName, in.PasswordMd5); user != nil {
+	if user := service.User().GetUserInfo(ctx, in.LoginName, in.PasswordMd5); user != nil {
 		return user, nil
 	}
 

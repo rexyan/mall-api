@@ -5,6 +5,7 @@ import (
 	"github.com/gogf/gf/v2/errors/gerror"
 	v1 "mall-api/api/v1"
 	"mall-api/internal/service"
+	"mall-api/utility"
 )
 
 var (
@@ -22,6 +23,6 @@ func (c *cUser) Login(ctx context.Context, req *v1.UserLoginReq) (res *v1.UserLo
 	// 登录成功给客户端返回token
 	res = &v1.UserLoginRes{}
 	// 获取token
-	res.Token, _ = service.Auth().LoginHandler(ctx)
+	res.Token, _ = utility.Auth().LoginHandler(ctx)
 	return
 }

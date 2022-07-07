@@ -20,7 +20,7 @@ type GoodsItem struct {
 
 // 首页
 type IndexInfosReq struct {
-	g.Meta `path:"index-infos" tags:"Index" method:"get" summary:"首页"`
+	g.Meta `path:"index-infos" tags:"首页" method:"get" summary:"首页信息"`
 }
 
 type IndexInfosRes struct {
