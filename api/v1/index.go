@@ -1,6 +1,8 @@
 package v1
 
-import "github.com/gogf/gf/v2/frame/g"
+import (
+	"github.com/gogf/gf/v2/frame/g"
+)
 
 type IndexCarouselItem struct {
 	CarouselUrl string `json:"carouselUrl"`
