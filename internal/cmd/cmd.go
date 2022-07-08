@@ -22,13 +22,14 @@ var (
 				group.Middleware(ghttp.MiddlewareHandlerResponse, ghttp.MiddlewareCORS)
 				group.Bind(
 					controller.Index,  // 首页
-					controller.User,  // 用户
+					controller.User,   // 用户
 				)
 
 				group.Group("", func(group *ghttp.RouterGroup) {
 					group.Middleware(utility.Middleware().Auth)
 					group.Bind(
 						controller.Goods,   // 商品
+						controller.Cart,    // 购物车
 					)
 				})
 			})

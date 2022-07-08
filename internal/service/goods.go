@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"github.com/gogf/gf/v2/errors/gerror"
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/util/gconv"
 	v1 "mall-api/api/v1"
@@ -29,6 +30,9 @@ func (s *sGoods) Detail(ctx context.Context, goodId string) (*v1.GoodsDetailRes,
 	err := dao.GoodsInfo.Ctx(ctx).Where(g.Map{"goods_id": goodId}).Scan(&goodsInfo)
 	if err != nil {
 		return nil, err
+	}
+	if goodsInfo == nil{
+		return nil, gerror.New("未找到商品信息!")
 	}
 	return &v1.GoodsDetailRes{
 		GoodsCarouselList:  gconv.Strings(goodsInfo.GoodsCarousel),

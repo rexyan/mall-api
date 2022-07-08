@@ -34,7 +34,8 @@ func init() {
 		// 身份验证的key值
 		IdentityKey: "userId",
 		//token检索模式，用于提取token-> Authorization
-		TokenLookup: "header: Authorization, query: token, cookie: jwt",
+		// TokenLookup: "header: Authorization, query: token, cookie: jwt",
+		TokenLookup: "header: Authorization",
 		// token在请求头时的名称，默认值为Bearer.客户端在header中传入"Authorization":"token xxxxxx"
 		TokenHeadName: "Bearer",
 		TimeFunc:      time.Now,
