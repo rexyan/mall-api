@@ -14,3 +14,25 @@ type SaveOrderReq struct {
 type SaveOrderRes struct {
 	Status string `json:"status"`
 }
+
+/**
+查询订单状态
+*/
+type OrderListReq struct {
+	PageReq
+	Status int `json:"status"`
+}
+
+type OrderListRes struct {
+	PageRes
+	List []struct {
+		CreateTime             string   `json:"createTime"`
+		NewBeeMallOrderItemVOS []GetCartRes `json:"newBeeMallOrderItemVOS"`
+		OrderId                int      `json:"orderId"`
+		OrderNo                string   `json:"orderNo"`
+		OrderStatus            int      `json:"orderStatus"`
+		OrderStatusString      string   `json:"orderStatusString"`
+		PayType                int      `json:"payType"`
+		TotalPrice             int      `json:"totalPrice"`
+	} `json:"list"`
+}
