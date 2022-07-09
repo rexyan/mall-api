@@ -61,7 +61,7 @@ type UpdateCartRes struct {
 */
 type CartSettleReq struct {
 	g.Meta      `path:"shop-cart/settle" tag:"商品" method:"get" summary:"购物车结算"`
-	CartItemIds string `json:"cartItemIds" in:"query" dc:"购物车ID，多个使用','分割"`
+	CartItemIds string `json:"cartItemIds" v:"required" in:"query" dc:"购物车ID，多个使用','分割"`
 }
 
 type CartSettleRes struct {

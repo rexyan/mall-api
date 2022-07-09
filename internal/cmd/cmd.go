@@ -4,6 +4,7 @@ import (
 	"context"
 	"mall-api/utility"
 
+	_ "github.com/gogf/gf/contrib/drivers/mysql/v2"
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/net/ghttp"
 	"github.com/gogf/gf/v2/os/gcmd"
@@ -21,8 +22,8 @@ var (
 			s.Group("/api/v1", func(group *ghttp.RouterGroup) {
 				group.Middleware(ghttp.MiddlewareHandlerResponse, ghttp.MiddlewareCORS)
 				group.Bind(
-					controller.Index,  // 首页
-					controller.User,   // 用户
+					controller.Index, // 首页
+					controller.User,  // 用户
 				)
 
 				group.Group("", func(group *ghttp.RouterGroup) {
@@ -30,6 +31,8 @@ var (
 					group.Bind(
 						controller.Goods,   // 商品
 						controller.Cart,    // 购物车
+						controller.Address, // 订单地址
+						controller.Order,   // 订单
 					)
 				})
 			})

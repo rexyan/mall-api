@@ -73,7 +73,7 @@ func IdentityHandler(ctx context.Context) interface{} {
 
 func Unauthorized(ctx context.Context, code int, message string) {
 	r := g.RequestFromCtx(ctx)
-	_ = r.Response.WriteJson(g.Map{
+	r.Response.WriteJson(g.Map{
 		"code":    code,
 		"message": message,
 	})
