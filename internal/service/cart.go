@@ -81,3 +81,17 @@ func (s *sCart) UpdateShopCart(ctx context.Context, userId int, cartItemId int, 
 	}
 	return &v1.UpdateCartRes{}, nil
 }
+
+/**
+根据购物车ID获取购物商品信息
+ */
+func (s *sCart) GetCartGoodsById(ctx context.Context, cartItemId int) (*v1.CartSettleRes, error) {
+	var cartRes v1.CartSettleRes
+	err := g.Model("tb_newbee_mall_shopping_cart_item cart").InnerJoin("tb_newbee_mall_goods_info goods", "cart.goods_id=goods.goods_id").Fields(
+		"cart.cart_item_id,cart.goods_count,goods.goods_id,goods.goods_cover_img,goods.goods_name,goods.selling_price",
+	).Where(g.Map{"cart.is_deleted": 0, "cart.cart_item_id": cartItemId}).Scan(&cartRes)
+	if err != nil {
+		return nil, err
+	}
+	return &cartRes, err
+}

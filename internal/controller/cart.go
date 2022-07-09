@@ -2,6 +2,7 @@ package controller
 
 import (
 	"context"
+	"github.com/gogf/gf/v2/text/gstr"
 	"github.com/gogf/gf/v2/util/gconv"
 	v1 "mall-api/api/v1"
 	"mall-api/internal/service"
@@ -55,4 +56,19 @@ func (c *cCart) UpdateShopCart(ctx context.Context, req *v1.UpdateCartReq) (res 
 		return nil, err
 	}
 	return res, err
+}
+
+/**
+购物车结算
+ */
+func (c *cCart) CartSettle(ctx context.Context, req *v1.CartSettleReq) (res []v1.CartSettleRes, err error)  {
+	cartGoods := make([]v1.CartSettleRes, 0)
+	cartItemIds := gstr.Split(req.CartItemIds, ",")
+	for _, cartItemId := range cartItemIds{
+		println(cartItemId)
+		if cartItem, err := service.Cart().GetCartGoodsById(ctx, gconv.Int(cartItemId)); err == nil{
+			cartGoods = append(cartGoods, *cartItem)
+		}
+	}
+	return cartGoods, err
 }
