@@ -34,7 +34,11 @@ var (
 						controller.Address, // 订单地址
 						controller.Order,   // 订单
 					)
+					group.ALLMap(g.Map{
+						"/user/info": controller.User.GetUserInfo,
+					})
 				})
+
 			})
 			s.Run()
 			return nil

@@ -28,7 +28,7 @@ func init() {
 		// 签名密钥
 		Key: []byte("mall"),
 		// 时效
-		Timeout: time.Minute * 60,
+		Timeout: time.Minute * 60 * 6,
 		// 	token过期后，可凭借旧token获取新token的刷新时间
 		MaxRefresh: time.Minute * 5,
 		// 身份验证的key值
@@ -90,7 +90,7 @@ func Authenticator(ctx context.Context) (interface{}, error) {
 		return "", err
 	}
 
-	if user := service.User().GetUserInfo(ctx, in.LoginName, in.PasswordMd5); user != nil {
+	if user := service.User().CheckUserPassword(ctx, in.LoginName, in.PasswordMd5); user != nil {
 		return user, nil
 	}
 
