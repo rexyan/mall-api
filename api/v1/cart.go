@@ -12,6 +12,7 @@ type GetCartReq struct {
 
 type GetCartRes struct {
 	CartItemId    int    `json:"cartItemId"`
+	GoodsId       int    `json:"goodsId"`
 	GoodsCount    int    `json:"goodsCount"`
 	GoodsCoverImg string `json:"goodsCoverImg"`
 	GoodsName     string `json:"goodsName"`

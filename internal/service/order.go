@@ -5,10 +5,13 @@ import (
 	"github.com/gogf/gf/v2/database/gdb"
 	"github.com/gogf/gf/v2/errors/gerror"
 	"github.com/gogf/gf/v2/frame/g"
+	"github.com/gogf/gf/v2/os/gtime"
 	"github.com/gogf/gf/v2/text/gstr"
 	"github.com/gogf/gf/v2/util/gconv"
 	"github.com/gogf/guuid"
 	v1 "mall-api/api/v1"
+	"mall-api/internal/dao"
+	"mall-api/internal/model/entity"
 )
 
 type sOrder struct {
@@ -22,7 +25,7 @@ func Order() *sOrder {
 
 /**
 获取下单时购物车商品信息
- */
+*/
 func (s *sOrder) GetOrderGoodsInfos(ctx context.Context, cartItemIds []int) (*[]v1.CartSettleRes, error) {
 	// 查询商品信息
 	var orderGoodsInfos []v1.CartSettleRes
@@ -37,12 +40,12 @@ func (s *sOrder) GetOrderGoodsInfos(ctx context.Context, cartItemIds []int) (*[]
 
 /**
 下单
- */
-func (s *sOrder) SaveOrder(ctx context.Context, userId string, addressId int, cartItemIds []int) error {
+*/
+func (s *sOrder) SaveOrder(ctx context.Context, userId string, addressId int, cartItemIds []int) (string, error) {
 	// 生成订单 ID
 	uuid, err := guuid.NewRandom()
 	if err != nil {
-		return gerror.New("下单失败!")
+		return "", gerror.New("下单失败!")
 	}
 	orderNo := gstr.SubStr(gconv.String(uuid), 0, 20)
 
@@ -114,5 +117,116 @@ func (s *sOrder) SaveOrder(ctx context.Context, userId string, addressId int, ca
 		}
 		return nil
 	})
-	return nil
+	return orderNo, nil
+}
+
+/**
+查询订单中的商品快照信息
+*/
+func (s *sOrder) GetOrderGoodsSnapshotById(ctx context.Context, orderId int) ([]v1.GetCartRes, error) {
+	var snapshot []v1.GetCartRes
+	err := dao.OrderItem.Ctx(ctx).Where("order_id", orderId).Scan(&snapshot)
+	if err != nil {
+		return nil, err
+	}
+	return snapshot, nil
+}
+
+/**
+查询订单中的商品快照信息
+*/
+func (s *sOrder) GetOrderIdByNo(ctx context.Context, orderNo string) (orderId int, err error) {
+	var order *entity.Order
+	err = dao.Order.Ctx(ctx).Where("order_no", orderNo).Scan(&order)
+	if err != nil {
+		return 0, err
+	}
+	if order != nil {
+		return gconv.Int(order.OrderId), nil
+	}
+	return 0, gerror.New("order not found!")
+}
+
+/**
+查询用户订单
+*/
+func (s *sOrder) GetOrderByUser(ctx context.Context, userId string, orderStatus int, page v1.PageReq) (*v1.OrderListRes, error) {
+	var orderList v1.OrderListRes
+	r := g.RequestFromCtx(ctx)
+	query := dao.Order.Ctx(ctx).Where(g.Map{
+		"user_id":      userId,
+		"order_status": orderStatus,
+	})
+	// 总数
+	count, err := query.Count()
+	if err != nil {
+		return nil, err
+	}
+	// 分页信息
+	pageInfo := r.GetPage(count, page.PageSize)
+	// 分页数据
+	err = query.Page(page.PageNumber, page.PageSize).Scan(&orderList.List)
+	if err != nil {
+		return nil, err
+	}
+	// 获取订单中每个商品的信息
+	for index, order := range orderList.List {
+		snapshot, err := Order().GetOrderGoodsSnapshotById(ctx, order.OrderId)
+		if err == nil {
+			for _, s := range snapshot {
+				orderList.List[index].NewBeeMallOrderItemVOS = append(orderList.List[index].NewBeeMallOrderItemVOS, s)
+			}
+		}
+	}
+	orderList.CurrentPage = pageInfo.CurrentPage
+	orderList.PageBarNum = pageInfo.PageBarNum
+	orderList.TotalSize = pageInfo.TotalSize
+	orderList.TotalPage = pageInfo.TotalPage
+	return &orderList, err
+}
+
+/**
+查询订单详情
+*/
+func (s *sOrder) GetOrderDetail(ctx context.Context, orderNo string) (*v1.OrderDetailRes, error) {
+	var orderDetail v1.OrderDetailRes
+	// 根据订单编号查询订单 ID
+	orderId, err := Order().GetOrderIdByNo(ctx, orderNo)
+	if err != nil {
+		return nil, err
+	}
+	// 查询订单商品快照信息
+	snapshot, err := Order().GetOrderGoodsSnapshotById(ctx, orderId)
+	err = dao.Order.Ctx(ctx).Where(g.Map{
+		"order_no": orderNo,
+	}).Scan(&orderDetail)
+	if err == nil {
+		for _, s := range snapshot {
+			orderDetail.NewBeeMallOrderItemVOS = append(orderDetail.NewBeeMallOrderItemVOS, s)
+		}
+	}
+	return &orderDetail, err
+}
+
+/**
+订单支付
+*/
+func (s *sOrder) PayOrder(ctx context.Context, orderNo string, payType string) (*v1.PayOrderRes, error) {
+	order, err := Order().GetOrderDetail(ctx, orderNo)
+	if err != nil || order == nil {
+		return nil, gerror.New("order not found!")
+	}
+	if order.OrderStatus != 0 {
+		return nil, gerror.New("order status error!")
+	}
+	_, err = dao.Order.Ctx(ctx).Data(g.Map{
+		"pay_type":     gconv.Int(payType),
+		"pay_status":   1,  // 支付成功
+		"pay_time":     gtime.Datetime(),
+		"order_status": 1,  // 已支付
+	}).Where("order_no", orderNo).Update()
+	if err != nil{
+		return nil, err
+	}
+	return &v1.PayOrderRes{}, err
 }

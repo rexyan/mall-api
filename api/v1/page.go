@@ -1,12 +1,13 @@
 package v1
 
 type PageReq struct {
-	PageNumber int `json:"pageNumber"`
+	PageNumber int `json:"pageNumber" d:"1"`
+	PageSize   int `json:"PageSize" d:"10"`
 }
 
 type PageRes struct {
-	CurrPage   int `json:"pageNumber"`
-	PageSize   int `json:"pageSize"`
-	TotalCount int `json:"totalCount"`
-	TotalPage  int `json:"totalPage"`
+	CurrentPage int `json:"pageNumber"`
+	PageBarNum  int `json:"pageSize"`
+	TotalSize   int `json:"totalCount"`
+	TotalPage   int `json:"totalPage"`
 }

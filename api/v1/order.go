@@ -12,27 +12,57 @@ type SaveOrderReq struct {
 }
 
 type SaveOrderRes struct {
-	Status string `json:"status"`
+	Data string `json:"data"`
 }
 
 /**
 查询订单状态
 */
 type OrderListReq struct {
+	g.Meta        `path:"order" tags:"订单" method:"get" summary:"用户订单查询"`
+	Authorization string `json:"Authorization" in:"header"  dc:"Authorization"`
+	Status        int    `json:"status" d:"0"`
 	PageReq
-	Status int `json:"status"`
+}
+
+type OrderListItem struct {
+	CreateTime             string       `json:"createTime"`
+	NewBeeMallOrderItemVOS []GetCartRes `json:"newBeeMallOrderItemVOS"`
+	OrderId                int          `json:"orderId"`
+	OrderNo                string       `json:"orderNo"`
+	OrderStatus            int          `json:"orderStatus"`
+	OrderStatusString      string       `json:"orderStatusString"`
+	PayType                int          `json:"payType"`
+	TotalPrice             int          `json:"totalPrice"`
 }
 
 type OrderListRes struct {
 	PageRes
-	List []struct {
-		CreateTime             string   `json:"createTime"`
-		NewBeeMallOrderItemVOS []GetCartRes `json:"newBeeMallOrderItemVOS"`
-		OrderId                int      `json:"orderId"`
-		OrderNo                string   `json:"orderNo"`
-		OrderStatus            int      `json:"orderStatus"`
-		OrderStatusString      string   `json:"orderStatusString"`
-		PayType                int      `json:"payType"`
-		TotalPrice             int      `json:"totalPrice"`
-	} `json:"list"`
+	List []OrderListItem `json:"list"`
+}
+
+/**
+查询订单详情
+*/
+type OrderDetailReq struct {
+	g.Meta        `path:"order/:orderNo" tags:"订单" method:"get" summary:"查询订单详情"`
+	Authorization string `json:"Authorization" in:"header"  dc:"Authorization"`
+	OrderNo       string `json:"orderNo" in:"path"`
+}
+
+type OrderDetailRes struct {
+	OrderListItem
+}
+
+/**
+订单支付
+*/
+type PayOrderReq struct {
+	g.Meta        `path:"paySuccess" tags:"订单" method:"get" summary:"订单支付"`
+	Authorization string `json:"Authorization" in:"header"  dc:"Authorization"`
+	OrderNo       string `json:"orderNo" in:"query"`
+	PayType       string `json:"payType" in:"query"`
+}
+
+type PayOrderRes struct {
 }
