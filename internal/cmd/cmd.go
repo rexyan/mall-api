@@ -37,6 +37,9 @@ var (
 					group.ALLMap(g.Map{
 						"/user/info": controller.User.GetUserInfo,
 					})
+					group.ALLMap(g.Map{
+						"/user/info": controller.User.UpdateUserInfo,
+					})
 				})
 
 			})

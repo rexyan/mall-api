@@ -28,3 +28,16 @@ type UserInfoRes struct {
 	LoginName     string `json:"loginName"`
 	NickName      string `json:"nickName"`
 }
+
+/**
+我的-修改账户信息
+*/
+type UpdateUserInfoReq struct {
+	g.Meta        `path:"user/info" tags:"用户" method:"put" summary:"修改用户信息"`
+	Authorization string `json:"Authorization" in:"header"  dc:"Authorization"`
+	IntroduceSign string `json:"introduceSign"`
+	NickName      string `json:"nickName"`
+}
+
+type UpdateUserInfoRes struct {
+}

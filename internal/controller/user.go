@@ -17,7 +17,7 @@ type cUser struct{}
 
 /**
 登录
- */
+*/
 func (c *cUser) Login(ctx context.Context, req *v1.UserLoginReq) (res *v1.UserLoginRes, err error) {
 	if err = service.User().Login(ctx, req.LoginName, req.PasswordMd5); err != nil {
 		return nil, gerror.New("login error!")
@@ -31,8 +31,20 @@ func (c *cUser) Login(ctx context.Context, req *v1.UserLoginReq) (res *v1.UserLo
 
 /**
 我的-用户信息
- */
+*/
 func (c *cUser) GetUserInfo(ctx context.Context, req *v1.UserInfoReq) (*v1.UserInfoRes, error) {
 	userId := gconv.String(utility.Auth().GetIdentity(ctx))
 	return service.User().GetUserInfo(ctx, userId)
+}
+
+/**
+我的-修改账户信息
+*/
+func (c *cUser) UpdateUserInfo(ctx context.Context, req *v1.UpdateUserInfoReq) (*v1.UpdateUserInfoRes, error) {
+	userId := gconv.String(utility.Auth().GetIdentity(ctx))
+	_, err := service.User().UpdateUserInfo(ctx, userId, req.NickName, req.IntroduceSign)
+	if err != nil {
+		return nil, err
+	}
+	return &v1.UpdateUserInfoRes{}, nil
 }
