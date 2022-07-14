@@ -21,9 +21,9 @@ type CategoryRes struct {
 
 type SecondLevelCategoryVOS struct {
 	CategoryItem          CategoryItem
-	ThirdLevelCategoryVOS []thirdLevelCategoryVOS `json:"thirdLevelCategoryVOS"`
+	ThirdLevelCategoryVOS []ThirdLevelCategoryVOS `json:"thirdLevelCategoryVOS"`
 }
 
-type thirdLevelCategoryVOS struct {
+type ThirdLevelCategoryVOS struct {
 	CategoryItem []CategoryItem
 }
