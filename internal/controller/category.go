@@ -6,10 +6,10 @@ import (
 	"mall-api/internal/service"
 )
 
-var Category = cCart{}
+var Category = cCategory{}
 
 type cCategory struct{}
 
-func (c *cCategory) GetCategory(ctx context.Context, req *v1.CategoryReq) (res *v1.CategoryRes, err error) {
+func (c *cCategory) GetCategory(ctx context.Context, req *v1.CategoryReq) (res *[]v1.CategoryRes, err error) {
 	return service.Category().GetCategory(ctx)
 }

@@ -15,15 +15,16 @@ type CategoryReq struct {
 }
 
 type CategoryRes struct {
-	CategoryItem           CategoryItem
-	SecondLevelCategoryVOS []SecondLevelCategoryVOS `json:"secondLevelCategoryVOS"`
+	CategoryItem
+	SecondLevelCategoryVOS []CategoryItem `json:"secondLevelCategoryVOS"`
 }
 
 type SecondLevelCategoryVOS struct {
-	CategoryItem          CategoryItem
-	ThirdLevelCategoryVOS []ThirdLevelCategoryVOS `json:"thirdLevelCategoryVOS"`
+	CategoryItem
+	ThirdLevelCategoryVOS []CategoryItem `json:"thirdLevelCategoryVOS"`
 }
 
 type ThirdLevelCategoryVOS struct {
-	CategoryItem []CategoryItem
+	CategoryItem CategoryItem
+	Child        []CategoryItem `json:"thirdLevelCategoryVOS"`
 }
