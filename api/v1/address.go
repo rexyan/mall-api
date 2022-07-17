@@ -20,21 +20,21 @@ type UserAllAddressReq struct {
 地址详情
 */
 type AddressDetailReq struct {
-	g.Meta `path:"address/:addressId" tag:"地址" method:"get" summary:"配送地址详情"`
+	g.Meta    `path:"address/:addressId" tag:"地址" method:"get" summary:"配送地址详情"`
 	AddressId string `json:"addressId" in:"path"`
 }
 
 type AddressRes struct {
-	AddressId     int    `json:"address_id"`
-	CityName      string `json:"city_name"`
-	CreateTime    string `json:"create_time"`
-	DefaultFlag   int    `json:"default_flag"`
-	DetailAddress string `json:"detail_address"`
-	IsDeleted     int    `json:"is_deleted"`
-	ProvinceName  string `json:"province_name"`
-	RegionName    string `json:"region_name"`
-	UpdateTime    string `json:"update_time"`
-	UserId        int    `json:"user_id"`
-	UserName      string `json:"user_name"`
-	UserPhone     string `json:"user_phone"`
+	AddressId     int    `json:"addressId"`
+	CityName      string `json:"cityName"`
+	CreateTime    string `json:"createTime"`
+	DefaultFlag   int    `json:"defaultFlag"`
+	DetailAddress string `json:"detailAddress"`
+	IsDeleted     int    `json:"isDeleted"`
+	ProvinceName  string `json:"provinceName"`
+	RegionName    string `json:"regionName"`
+	UpdateTime    string `json:"updateTime"`
+	UserId        int    `json:"userId"`
+	UserName      string `json:"userName"`
+	UserPhone     string `json:"userPhone"`
 }

@@ -11,15 +11,15 @@ import (
 
 var Cart = cCart{}
 
-type cCart struct {}
+type cCart struct{}
 
 /**
 获取购物车列表
- */
-func (c *cCart) GetShopCart(ctx context.Context, req *v1.GetCartReq) (res *[]v1.GetCartRes, err error)  {
+*/
+func (c *cCart) GetShopCart(ctx context.Context, req *v1.GetCartReq) (res *[]v1.GetCartRes, err error) {
 	userId := gconv.Int(utility.Auth().GetIdentity(ctx))
 	res, err = service.Cart().GetUserCart(ctx, userId)
-	if err != nil{
+	if err != nil {
 		return nil, err
 	}
 	return res, err
@@ -27,8 +27,8 @@ func (c *cCart) GetShopCart(ctx context.Context, req *v1.GetCartReq) (res *[]v1.
 
 /**
 删除购物车中商品
- */
-func (c *cCart) DelShopCart(ctx context.Context, req *v1.DelCartReq) (res *v1.DelCartRes, err error)  {
+*/
+func (c *cCart) DelShopCart(ctx context.Context, req *v1.DelCartReq) (res *v1.DelCartRes, err error) {
 	userId := gconv.Int(utility.Auth().GetIdentity(ctx))
 	_ = service.Cart().DelShopCart(ctx, userId, req.CarId)
 	return nil, nil
@@ -36,11 +36,11 @@ func (c *cCart) DelShopCart(ctx context.Context, req *v1.DelCartReq) (res *v1.De
 
 /**
 新增商品到购物车
- */
-func (c *cCart) AddShopCart(ctx context.Context, req *v1.AddCartReq) (res *v1.AddCartRes, err error)  {
+*/
+func (c *cCart) AddShopCart(ctx context.Context, req *v1.AddCartReq) (res *v1.AddCartRes, err error) {
 	userId := gconv.Int(utility.Auth().GetIdentity(ctx))
 	res, err = service.Cart().AddShopCart(ctx, userId, req.GoodsId, req.GoodsCount)
-	if err != nil{
+	if err != nil {
 		return nil, err
 	}
 	return res, err
@@ -48,11 +48,11 @@ func (c *cCart) AddShopCart(ctx context.Context, req *v1.AddCartReq) (res *v1.Ad
 
 /**
 修改购物车中商品数量
- */
-func (c *cCart) UpdateShopCart(ctx context.Context, req *v1.UpdateCartReq) (res *v1.UpdateCartRes, err error)  {
+*/
+func (c *cCart) UpdateShopCart(ctx context.Context, req *v1.UpdateCartReq) (res *v1.UpdateCartRes, err error) {
 	userId := gconv.Int(utility.Auth().GetIdentity(ctx))
 	res, err = service.Cart().UpdateShopCart(ctx, userId, req.CartItemId, req.GoodsCount)
-	if err != nil{
+	if err != nil {
 		return nil, err
 	}
 	return res, err
@@ -60,15 +60,8 @@ func (c *cCart) UpdateShopCart(ctx context.Context, req *v1.UpdateCartReq) (res 
 
 /**
 购物车结算
- */
-func (c *cCart) CartSettle(ctx context.Context, req *v1.CartSettleReq) (res []v1.CartSettleRes, err error)  {
-	cartGoods := make([]v1.CartSettleRes, 0)
+*/
+func (c *cCart) CartSettle(ctx context.Context, req *v1.CartSettleReq) (res []v1.CartSettleRes, err error) {
 	cartItemIds := gstr.Split(req.CartItemIds, ",")
-	for _, cartItemId := range cartItemIds{
-		println(cartItemId)
-		if cartItem, err := service.Cart().GetCartGoodsById(ctx, gconv.Int(cartItemId)); err == nil{
-			cartGoods = append(cartGoods, *cartItem)
-		}
-	}
-	return cartGoods, err
+	return service.Cart().CartSettle(ctx, cartItemIds)
 }

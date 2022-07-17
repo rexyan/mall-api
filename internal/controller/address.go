@@ -34,3 +34,5 @@ func (c *cAddress) GetUserAllAddress(ctx context.Context, req *v1.UserAllAddress
 	userId := gconv.String(utility.Auth().GetIdentity(ctx))
 	return service.Address().GetUserAllAddress(ctx, userId)
 }
+
+// TODO 新增地址

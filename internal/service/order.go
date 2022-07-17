@@ -115,8 +115,20 @@ func (s *sOrder) SaveOrder(ctx context.Context, userId string, addressId int, ca
 				return err
 			}
 		}
+		// 删除购物车中本次下单的商品
+		_, err = tx.Ctx(ctx).Update("tb_newbee_mall_shopping_cart_item", g.Map{
+			"is_deleted": 1,
+		}, g.Map{
+			"cart_item_id in (?)": cartItemIds,
+		})
+		if err != nil {
+			return err
+		}
 		return nil
 	})
+	if err != nil {
+		return "", err
+	}
 	return orderNo, nil
 }
 
@@ -152,11 +164,16 @@ func (s *sOrder) GetOrderIdByNo(ctx context.Context, orderNo string) (orderId in
 */
 func (s *sOrder) GetOrderByUser(ctx context.Context, userId string, orderStatus int, page v1.PageReq) (*v1.OrderListRes, error) {
 	var orderList v1.OrderListRes
+	orderList.List = make([]v1.OrderListItem, 0)
+
 	r := g.RequestFromCtx(ctx)
-	query := dao.Order.Ctx(ctx).Where(g.Map{
-		"user_id":      userId,
-		"order_status": orderStatus,
-	})
+	condition := map[string]interface{}{
+		"user_id": userId,
+	}
+	if orderStatus >= 0 {
+		condition["order_status"] = orderStatus
+	}
+	query := dao.Order.Ctx(ctx).Where(condition)
 	// 总数
 	count, err := query.Count()
 	if err != nil {
@@ -170,6 +187,7 @@ func (s *sOrder) GetOrderByUser(ctx context.Context, userId string, orderStatus 
 		return nil, err
 	}
 	// 获取订单中每个商品的信息
+
 	for index, order := range orderList.List {
 		snapshot, err := Order().GetOrderGoodsSnapshotById(ctx, order.OrderId)
 		if err == nil {
@@ -178,6 +196,9 @@ func (s *sOrder) GetOrderByUser(ctx context.Context, userId string, orderStatus 
 			}
 		}
 	}
+	//if orderList.List == nil {
+	//	orderList.List = make([]v1.OrderListItem, 0)
+	//}
 	orderList.CurrentPage = pageInfo.CurrentPage
 	orderList.PageBarNum = pageInfo.PageBarNum
 	orderList.TotalSize = pageInfo.TotalSize
@@ -221,11 +242,11 @@ func (s *sOrder) PayOrder(ctx context.Context, orderNo string, payType string) (
 	}
 	_, err = dao.Order.Ctx(ctx).Data(g.Map{
 		"pay_type":     gconv.Int(payType),
-		"pay_status":   1,  // 支付成功
+		"pay_status":   1, // 支付成功
 		"pay_time":     gtime.Datetime(),
-		"order_status": 1,  // 已支付
+		"order_status": 1, // 已支付
 	}).Where("order_no", orderNo).Update()
-	if err != nil{
+	if err != nil {
 		return nil, err
 	}
 	return &v1.PayOrderRes{}, err

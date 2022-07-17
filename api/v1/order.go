@@ -21,7 +21,7 @@ type SaveOrderRes struct {
 type OrderListReq struct {
 	g.Meta        `path:"order" tags:"订单" method:"get" summary:"用户订单查询"`
 	Authorization string `json:"Authorization" in:"header"  dc:"Authorization"`
-	Status        int    `json:"status" d:"0"`
+	Status        int    `json:"status" d:"-1"`
 	PageReq
 }
 
@@ -59,9 +59,9 @@ type OrderDetailRes struct {
 */
 type PayOrderReq struct {
 	g.Meta        `path:"paySuccess" tags:"订单" method:"get" summary:"订单支付"`
-	Authorization string `json:"Authorization" in:"header"  dc:"Authorization"`
-	OrderNo       string `json:"orderNo" in:"query"`
-	PayType       string `json:"payType" in:"query"`
+	Authorization string            `json:"Authorization" in:"header"  dc:"Authorization"`
+	OrderNo       map[string]string `json:"orderNo" in:"query"`
+	PayType       string            `json:"payType" in:"query"`
 }
 
 type PayOrderRes struct {

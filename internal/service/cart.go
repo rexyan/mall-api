@@ -25,7 +25,7 @@ func Cart() *sCart {
 获取购物车列表
 */
 func (s *sCart) GetUserCart(ctx context.Context, userId int) (*[]v1.GetCartRes, error) {
-	var cartRes []v1.GetCartRes
+	var cartRes = make([]v1.GetCartRes, 0)
 
 	err := g.Model("tb_newbee_mall_shopping_cart_item cart").InnerJoin("tb_newbee_mall_goods_info goods", "cart.goods_id=goods.goods_id").Fields(
 		"cart.cart_item_id,cart.goods_count,goods.goods_cover_img,goods.goods_name,goods.selling_price",
@@ -61,7 +61,7 @@ func (s *sCart) AddShopCart(ctx context.Context, userId int, goodsId int, goodsC
 	if err != nil {
 		return nil, err
 	}
-	if exists!=nil{
+	if exists != nil {
 		return nil, gerror.New("商品已在购物车中")
 	}
 	_, err = dao.ShoppingCartItem.Ctx(ctx).Insert(g.Map{"user_id": userId, "goods_id": goodsId, "goods_count": goodsCount})
@@ -73,7 +73,7 @@ func (s *sCart) AddShopCart(ctx context.Context, userId int, goodsId int, goodsC
 
 /**
 修改购物车中商品数量
- */
+*/
 func (s *sCart) UpdateShopCart(ctx context.Context, userId int, cartItemId int, goodsCount int) (*v1.UpdateCartRes, error) {
 	_, err := g.Model("tb_newbee_mall_shopping_cart_item").Data(g.Map{"goods_count": goodsCount}).Where(g.Map{"is_deleted": 0, "cart_item_id": cartItemId, "user_id": userId}).Update()
 	if err != nil {
@@ -84,7 +84,7 @@ func (s *sCart) UpdateShopCart(ctx context.Context, userId int, cartItemId int, 
 
 /**
 根据购物车ID获取购物商品信息
- */
+*/
 func (s *sCart) GetCartGoodsById(ctx context.Context, cartItemId int) (*v1.CartSettleRes, error) {
 	var cartRes v1.CartSettleRes
 	err := g.Model("tb_newbee_mall_shopping_cart_item cart").InnerJoin("tb_newbee_mall_goods_info goods", "cart.goods_id=goods.goods_id").Fields(
@@ -94,4 +94,15 @@ func (s *sCart) GetCartGoodsById(ctx context.Context, cartItemId int) (*v1.CartS
 		return nil, err
 	}
 	return &cartRes, err
+}
+
+// CartSettle 结算
+func (s *sCart) CartSettle(ctx context.Context, cartItemIds []string) (res []v1.CartSettleRes, err error) {
+	cartGoods := make([]v1.CartSettleRes, 0)
+	for _, cartItemId := range cartItemIds {
+		if cartItem, err := Cart().GetCartGoodsById(ctx, gconv.Int(cartItemId)); err == nil {
+			cartGoods = append(cartGoods, *cartItem)
+		}
+	}
+	return cartGoods, nil
 }

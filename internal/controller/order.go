@@ -2,6 +2,7 @@ package controller
 
 import (
 	"context"
+	"fmt"
 	"github.com/gogf/gf/v2/util/gconv"
 	v1 "mall-api/api/v1"
 	"mall-api/internal/service"
@@ -46,7 +47,8 @@ func (c *cOrder) GetOrderDetail(ctx context.Context, req *v1.OrderDetailReq) (*v
 
 /**
 订单支付
- */
+*/
 func (c *cOrder) PayOrder(ctx context.Context, req *v1.PayOrderReq) (*v1.PayOrderRes, error) {
-	return service.Order().PayOrder(ctx, req.OrderNo, req.PayType)
+	fmt.Println(req)
+	return service.Order().PayOrder(ctx, req.OrderNo["data"], req.PayType)
 }
