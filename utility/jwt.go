@@ -3,11 +3,14 @@ package utility
 import (
 	"context"
 	jwt "github.com/gogf/gf-jwt/v2"
+	"github.com/gogf/gf/v2/errors/gcode"
+	"github.com/gogf/gf/v2/errors/gerror"
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/net/ghttp"
 	"github.com/gogf/gf/v2/util/gconv"
 	v1 "mall-api/api/v1"
 	"mall-api/internal/service"
+	"net/http"
 	"time"
 )
 
@@ -35,9 +38,9 @@ func init() {
 		IdentityKey: "userId",
 		//token检索模式，用于提取token-> Authorization
 		// TokenLookup: "header: Authorization, query: token, cookie: jwt",
-		TokenLookup: "header: Authorization",
+		TokenLookup: "header: token",
 		// token在请求头时的名称，默认值为Bearer.客户端在header中传入"Authorization":"token xxxxxx"
-		TokenHeadName: "Bearer",
+		TokenHeadName: "",
 		TimeFunc:      time.Now,
 		// 用户标识 map  私有属性
 		// 根据登录信息对用户进行身份验证的回调函数
@@ -74,8 +77,8 @@ func IdentityHandler(ctx context.Context) interface{} {
 func Unauthorized(ctx context.Context, code int, message string) {
 	r := g.RequestFromCtx(ctx)
 	r.Response.WriteJson(g.Map{
-		"code":    code,
-		"message": message,
+		"resultCode": 416,
+		"message":    "请登录后再进行操作",
 	})
 	r.ExitAll()
 }
@@ -97,7 +100,6 @@ func Authenticator(ctx context.Context) (interface{}, error) {
 	return nil, jwt.ErrFailedAuthentication
 }
 
-
 // 权限中间件
 type middlewareService struct{}
 
@@ -112,4 +114,49 @@ func (s *middlewareService) Auth(r *ghttp.Request) {
 	// Auth是权限service中配置的gf jwt
 	Auth().MiddlewareFunc()(r)
 	r.Middleware.Next()
+}
+
+type DefaultHandlerRes struct {
+	ResultCode int         `json:"resultCode"    dc:"Error code"`
+	Message    string      `json:"message" dc:"Error message" d:""`
+	Data       interface{} `json:"data"    dc:"Result data for certain request according API definition"`
+}
+
+func (s *middlewareService) CustomResponse(r *ghttp.Request) {
+	r.Middleware.Next()
+
+	// There's custom buffer content, it then exits current handler.
+	if r.Response.BufferLength() > 0 {
+		return
+	}
+
+	var (
+		msg  string
+		err  = r.GetError()
+		res  = r.GetHandlerResponse()
+		code = gerror.Code(err)
+	)
+	if err != nil {
+		if code == gcode.CodeNil {
+			code = gcode.CodeInternalError
+		}
+		msg = err.Error()
+	} else if r.Response.Status > 0 && r.Response.Status != http.StatusOK {
+		msg = http.StatusText(r.Response.Status)
+		switch r.Response.Status {
+		case http.StatusNotFound:
+			code = gcode.CodeNotFound
+		case http.StatusForbidden:
+			code = gcode.CodeNotAuthorized
+		default:
+			code = gcode.CodeUnknown
+		}
+	} else {
+		code = gcode.New(200, "success", "")
+	}
+	r.Response.WriteJson(DefaultHandlerRes{
+		ResultCode: code.Code(),
+		Message:    msg,
+		Data:       res,
+	})
 }

@@ -2,7 +2,9 @@ package controller
 
 import (
 	"context"
-	"github.com/gogf/gf/v2/errors/gerror"
+	"fmt"
+	"github.com/gogf/gf/v2/frame/g"
+	"github.com/gogf/gf/v2/net/ghttp"
 	"github.com/gogf/gf/v2/util/gconv"
 	v1 "mall-api/api/v1"
 	"mall-api/internal/service"
@@ -18,15 +20,25 @@ type cUser struct{}
 /**
 登录
 */
-func (c *cUser) Login(ctx context.Context, req *v1.UserLoginReq) (res *v1.UserLoginRes, err error) {
-	if err = service.User().Login(ctx, req.LoginName, req.PasswordMd5); err != nil {
-		return nil, gerror.New("login error!")
+func Login(r *ghttp.Request) {
+	ctx := r.GetCtx()
+	name := gconv.String(r.Get("loginName"))
+	pass := gconv.String(r.Get("passwordMd5"))
+
+	if err := service.User().Login(ctx, name, pass); err != nil {
+		fmt.Println(err)
+		r.Response.WriteJson(g.Map{
+			"data":       "",
+			"message":    "用户密码不正确",
+			"resultCode": 401,
+		})
 	}
-	// 登录成功给客户端返回token
-	res = &v1.UserLoginRes{}
-	// 获取token
-	res.Token, _ = utility.Auth().LoginHandler(ctx)
-	return
+	tokenString, _ := utility.Auth().LoginHandler(ctx)
+	r.Response.WriteJson(g.Map{
+		"data":       tokenString,
+		"message":    "success",
+		"resultCode": 200,
+	})
 }
 
 /**

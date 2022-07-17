@@ -11,9 +11,7 @@ type UserLoginReq struct {
 	PasswordMd5 string `json:"passwordMd5"`
 }
 
-type UserLoginRes struct {
-	Token string `json:"token"`
-}
+type UserLoginRes string
 
 /**
 我的-用户信息
