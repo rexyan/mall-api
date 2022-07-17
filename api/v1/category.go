@@ -14,17 +14,18 @@ type CategoryReq struct {
 	Authorization string `json:"Authorization" in:"header"  dc:"Authorization"`
 }
 
+type CRes []CategoryRes
+
 type CategoryRes struct {
 	CategoryItem
-	SecondLevelCategoryVOS []CategoryItem `json:"secondLevelCategoryVOS"`
+	SecondLevelCategoryVOS []SecondLevelCategoryVOS `json:"secondLevelCategoryVOS"`
 }
 
 type SecondLevelCategoryVOS struct {
 	CategoryItem
-	ThirdLevelCategoryVOS []CategoryItem `json:"thirdLevelCategoryVOS"`
+	ThirdLevelCategoryVOS []ThirdLevelCategoryVOS `json:"thirdLevelCategoryVOS"`
 }
 
 type ThirdLevelCategoryVOS struct {
-	CategoryItem CategoryItem
-	Child        []CategoryItem `json:"thirdLevelCategoryVOS"`
+	CategoryItem
 }

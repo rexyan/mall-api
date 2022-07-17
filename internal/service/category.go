@@ -4,7 +4,6 @@ import (
 	"context"
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/util/gconv"
-	v1 "mall-api/api/v1"
 	"mall-api/internal/dao"
 	"mall-api/internal/model/entity"
 )
@@ -60,13 +59,10 @@ func (s *sCategory) GetCategoryByLevel(ctx context.Context, categoryLevel int) (
 /**
 获取 Category 信息
 */
-func (s *sCategory) GetCategory(ctx context.Context) (*[]v1.CategoryRes, error) {
+func (s *sCategory) GetCategory(ctx context.Context) *[]interface{} {
 	var res []interface{}
-	var categoryArray []v1.CategoryRes
-
 	Category().GetCategoryTree(ctx, &res, 0)
-	_ = gconv.Structs(res, &categoryArray)
-	return &categoryArray, nil
+	return &res
 }
 
 func (s *sCategory) GetCategoryTree(ctx context.Context, res *[]interface{}, parentId int) {

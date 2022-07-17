@@ -22,10 +22,11 @@ var (
 			s.Group("/api/v1", func(group *ghttp.RouterGroup) {
 				group.Middleware(ghttp.MiddlewareHandlerResponse, ghttp.MiddlewareCORS)
 				group.Bind(
-					controller.Index,    // 首页
-					controller.User,     // 用户
-					controller.Category, // 分类
+					controller.Index, // 首页
+					controller.User,  // 用户
+					// controller.Category, // 分类
 				)
+				s.BindHandler("/api/v1/categories", controller.GetCategory)
 
 				group.Group("", func(group *ghttp.RouterGroup) {
 					group.Middleware(utility.Middleware().Auth)
