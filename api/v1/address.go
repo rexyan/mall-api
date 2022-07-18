@@ -38,3 +38,20 @@ type AddressRes struct {
 	UserName      string `json:"userName"`
 	UserPhone     string `json:"userPhone"`
 }
+
+/**
+新增地址
+*/
+type AddAddressReq struct {
+	g.Meta        `path:"address" tag:"地址" method:"post" summary:"新增地址"`
+	CityName      string `json:"cityName"`
+	DefaultFlag   int    `json:"defaultFlag" d:"0"`
+	DetailAddress string `json:"detailAddress"`
+	ProvinceName  string `json:"provinceName"`
+	RegionName    string `json:"regionName"`
+	UserName      string `json:"userName"`
+	UserPhone     string `json:"userPhone"`
+}
+
+type AddAddressRes struct {
+}

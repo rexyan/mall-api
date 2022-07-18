@@ -17,7 +17,7 @@ type cOrder struct {
 /**
 下单
 */
-func (c cOrder) SaveOrder(ctx context.Context, req *v1.SaveOrderReq) (*v1.SaveOrderRes, error) {
+func (c *cOrder) SaveOrder(ctx context.Context, req *v1.SaveOrderReq) (*v1.SaveOrderRes, error) {
 	userId := gconv.String(utility.Auth().GetIdentity(ctx))
 	orderNo, err := service.Order().SaveOrder(ctx, userId, req.AddressId, req.CartItemIds)
 	if err != nil {
@@ -33,7 +33,7 @@ func (c cOrder) SaveOrder(ctx context.Context, req *v1.SaveOrderReq) (*v1.SaveOr
 /**
 查询用户订单
 */
-func (c cOrder) GetOrderByUser(ctx context.Context, req *v1.OrderListReq) (*v1.OrderListRes, error) {
+func (c *cOrder) GetOrderByUser(ctx context.Context, req *v1.OrderListReq) (*v1.OrderListRes, error) {
 	userId := gconv.String(utility.Auth().GetIdentity(ctx))
 	return service.Order().GetOrderByUser(ctx, userId, req.Status, req.PageReq)
 }

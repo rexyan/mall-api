@@ -35,4 +35,10 @@ func (c *cAddress) GetUserAllAddress(ctx context.Context, req *v1.UserAllAddress
 	return service.Address().GetUserAllAddress(ctx, userId)
 }
 
-// TODO 新增地址
+/**
+新增地址
+ */
+func (c *cAddress) AddAddress (ctx context.Context, req *v1.AddAddressReq) (*v1.AddAddressRes, error) {
+	userId := gconv.String(utility.Auth().GetIdentity(ctx))
+	return service.Address().AddAddress(ctx, userId, req)
+}

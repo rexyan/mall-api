@@ -38,6 +38,7 @@ var (
 						controller.Cart,    // 购物车
 						controller.Address, // 订单地址
 						controller.Order,   // 订单
+						controller.Search,  // 查询
 					)
 					group.ALLMap(g.Map{
 						"/user/info": controller.User.GetUserInfo,

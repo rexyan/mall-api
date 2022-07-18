@@ -196,9 +196,7 @@ func (s *sOrder) GetOrderByUser(ctx context.Context, userId string, orderStatus 
 			}
 		}
 	}
-	//if orderList.List == nil {
-	//	orderList.List = make([]v1.OrderListItem, 0)
-	//}
+
 	orderList.CurrentPage = pageInfo.CurrentPage
 	orderList.PageBarNum = pageInfo.PageBarNum
 	orderList.TotalSize = pageInfo.TotalSize
