@@ -19,17 +19,21 @@ var (
 		Brief: "start http server",
 		Func: func(ctx context.Context, parser *gcmd.Parser) (err error) {
 			s := g.Server()
+			//全局中间件注册
 			s.Use(utility.Middleware().CustomResponse, ghttp.MiddlewareCORS)
 
+			// 不需要 JWT Token 校验的路由
 			s.Group("/api/v1", func(group *ghttp.RouterGroup) {
-				// group.Middleware(utility.Middleware().CustomResponse, ghttp.MiddlewareCORS)
-				group.Bind(
-					controller.Index, // 首页
-					controller.User,  // 用户
-					// controller.Category, // 分类
-				)
+				group.GET("/index-infos", controller.Index.IndexInfos)
+				group.POST("/user/login", controller.User.Login)
+
+				//group.Bind(
+				//	controller.Index, // 首页
+				//	controller.User,  // 用户
+				//	// controller.Category, // 分类
+				//)
 				s.BindHandler("/api/v1/categories", controller.GetCategory)
-				s.BindHandler("/api/v1/user/login", controller.Login)
+				// s.BindHandler("/api/v1/user/login", controller.Login)
 
 				group.Group("", func(group *ghttp.RouterGroup) {
 					group.Middleware(utility.Middleware().Auth)
