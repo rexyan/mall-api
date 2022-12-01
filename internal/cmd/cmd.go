@@ -26,15 +26,9 @@ var (
 			s.Group("/api/v1", func(group *ghttp.RouterGroup) {
 				group.GET("/index-infos", controller.Index.IndexInfos)
 				group.POST("/user/login", controller.User.Login)
+				group.POST("/categories", controller.Category.GetCategory)
 
-				//group.Bind(
-				//	controller.Index, // 首页
-				//	controller.User,  // 用户
-				//	// controller.Category, // 分类
-				//)
-				s.BindHandler("/api/v1/categories", controller.GetCategory)
-				// s.BindHandler("/api/v1/user/login", controller.Login)
-
+				// 需要  JWT Token 的路由
 				group.Group("", func(group *ghttp.RouterGroup) {
 					group.Middleware(utility.Middleware().Auth)
 					group.Bind(
@@ -43,15 +37,9 @@ var (
 						controller.Address, // 订单地址
 						controller.Order,   // 订单
 						controller.Search,  // 查询
+						controller.User,    // 用户
 					)
-					group.ALLMap(g.Map{
-						"/user/info": controller.User.GetUserInfo,
-					})
-					group.ALLMap(g.Map{
-						"/user/info": controller.User.UpdateUserInfo,
-					})
 				})
-
 			})
 			s.Run()
 			return nil

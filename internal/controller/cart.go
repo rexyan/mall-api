@@ -13,55 +13,61 @@ var Cart = cCart{}
 
 type cCart struct{}
 
-/**
-获取购物车列表
-*/
+// GetShopCart 获取购物车列表
 func (c *cCart) GetShopCart(ctx context.Context, req *v1.GetCartReq) (res *[]v1.GetCartRes, err error) {
 	userId := gconv.Int(utility.Auth().GetIdentity(ctx))
-	res, err = service.Cart().GetUserCart(ctx, userId)
+	userCart, err := service.Cart().GetUserCart(ctx, userId)
 	if err != nil {
 		return nil, err
 	}
-	return res, err
+	if err := gconv.Structs(userCart, &res); err != nil {
+		return nil, err
+	}
+	return
 }
 
-/**
-删除购物车中商品
-*/
+// DelShopCart 删除购物车中商品
 func (c *cCart) DelShopCart(ctx context.Context, req *v1.DelCartReq) (res *v1.DelCartRes, err error) {
 	userId := gconv.Int(utility.Auth().GetIdentity(ctx))
 	_ = service.Cart().DelShopCart(ctx, userId, req.CarId)
 	return nil, nil
 }
 
-/**
-新增商品到购物车
-*/
+// AddShopCart 新增商品到购物车
 func (c *cCart) AddShopCart(ctx context.Context, req *v1.AddCartReq) (res *v1.AddCartRes, err error) {
 	userId := gconv.Int(utility.Auth().GetIdentity(ctx))
-	res, err = service.Cart().AddShopCart(ctx, userId, req.GoodsId, req.GoodsCount)
+	shopCart, err := service.Cart().AddShopCart(ctx, userId, req.GoodsId, req.GoodsCount)
 	if err != nil {
 		return nil, err
 	}
-	return res, err
+	if err := gconv.Structs(shopCart, &res); err != nil {
+		return nil, err
+	}
+	return
 }
 
-/**
-修改购物车中商品数量
-*/
+// UpdateShopCart 修改购物车中商品数量
 func (c *cCart) UpdateShopCart(ctx context.Context, req *v1.UpdateCartReq) (res *v1.UpdateCartRes, err error) {
 	userId := gconv.Int(utility.Auth().GetIdentity(ctx))
-	res, err = service.Cart().UpdateShopCart(ctx, userId, req.CartItemId, req.GoodsCount)
+	shopCart, err := service.Cart().UpdateShopCart(ctx, userId, req.CartItemId, req.GoodsCount)
 	if err != nil {
 		return nil, err
 	}
-	return res, err
+	if err := gconv.Structs(shopCart, &res); err != nil {
+		return nil, err
+	}
+	return
 }
 
-/**
-购物车结算
-*/
+// CartSettle 购物车结算
 func (c *cCart) CartSettle(ctx context.Context, req *v1.CartSettleReq) (res []v1.CartSettleRes, err error) {
 	cartItemIds := gstr.Split(req.CartItemIds, ",")
-	return service.Cart().CartSettle(ctx, cartItemIds)
+	cartSettle, err := service.Cart().CartSettle(ctx, cartItemIds)
+	if err != nil {
+		return nil, err
+	}
+	if err := gconv.Structs(cartSettle, &res); err != nil {
+		return nil, err
+	}
+	return
 }

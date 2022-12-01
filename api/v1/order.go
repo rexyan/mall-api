@@ -2,7 +2,8 @@ package v1
 
 import "github.com/gogf/gf/v2/frame/g"
 
-/**
+/*
+*
 下单
 */
 type SaveOrderReq struct {
@@ -15,7 +16,8 @@ type SaveOrderRes struct {
 	Data string `json:"data"`
 }
 
-/**
+/*
+*
 查询订单状态
 */
 type OrderListReq struct {
@@ -41,9 +43,7 @@ type OrderListRes struct {
 	List []OrderListItem `json:"list"`
 }
 
-/**
-查询订单详情
-*/
+// OrderDetailReq 查询订单详情
 type OrderDetailReq struct {
 	g.Meta        `path:"order/:orderNo" tags:"订单" method:"get" summary:"查询订单详情"`
 	Authorization string `json:"Authorization" in:"header"  dc:"Authorization"`
@@ -54,9 +54,7 @@ type OrderDetailRes struct {
 	OrderListItem
 }
 
-/**
-订单支付
-*/
+// PayOrderReq 订单支付
 type PayOrderReq struct {
 	g.Meta        `path:"paySuccess" tags:"订单" method:"get" summary:"订单支付"`
 	Authorization string            `json:"Authorization" in:"header"  dc:"Authorization"`

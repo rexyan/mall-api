@@ -14,33 +14,23 @@ var (
 
 type cUser struct{}
 
-/**
-登录
-*/
-func (c *cUser) Login(ctx context.Context, req *v1.UserLoginReq) (*v1.UserLoginRes, error) {
-	var token *v1.UserLoginRes
+// Login 登录
+func (c *cUser) Login(ctx context.Context, req *v1.UserLoginReq) (res v1.UserLoginRes, err error) {
 	if err := service.User().Login(ctx, req.LoginName, req.PasswordMd5); err != nil {
-		return nil, err
+		return res, err
 	}
-	//tokenString, _:= utility.Auth().LoginHandler(ctx)
-	//err := gconv.Scan(tokenString, &token)
-	//if err!=nil{
-	//	return nil, err
-	//}
-	return token, nil
+	tokenString, _ := utility.Auth().LoginHandler(ctx)
+	res = v1.UserLoginRes(tokenString)
+	return
 }
 
-/**
-我的-用户信息
-*/
+// GetUserInfo 我的-用户信息
 func (c *cUser) GetUserInfo(ctx context.Context, req *v1.UserInfoReq) (*v1.UserInfoRes, error) {
 	userId := gconv.String(utility.Auth().GetIdentity(ctx))
 	return service.User().GetUserInfo(ctx, userId)
 }
 
-/**
-我的-修改账户信息
-*/
+// UpdateUserInfo 我的-修改账户信息
 func (c *cUser) UpdateUserInfo(ctx context.Context, req *v1.UpdateUserInfoReq) (*v1.UpdateUserInfoRes, error) {
 	userId := gconv.String(utility.Auth().GetIdentity(ctx))
 	_, err := service.User().UpdateUserInfo(ctx, userId, req.NickName, req.IntroduceSign)

@@ -2,9 +2,7 @@ package v1
 
 import "github.com/gogf/gf/v2/frame/g"
 
-/**
-获取购物车列表
-*/
+// GetCartReq 获取购物车列表
 type GetCartReq struct {
 	g.Meta        `path:"shop-cart" tag:"商品" method:"get" summary:"获取购物车商品"`
 	Authorization string `json:"Authorization" in:"header"  dc:"Authorization"`
@@ -19,9 +17,7 @@ type GetCartRes struct {
 	SellingPrice  int    `json:"sellingPrice"`
 }
 
-/**
-删除购物车中商品
-*/
+// DelCartReq 删除购物车中商品
 type DelCartReq struct {
 	g.Meta        `path:"shop-cart/:cart_id" tag:"商品" method:"delete" summary:"删除购物车商品"`
 	CarId         string `json:"cart_id" in:"path"  dc:"购物车ID"`
@@ -31,9 +27,7 @@ type DelCartReq struct {
 type DelCartRes struct {
 }
 
-/**
-新增商品到购物车
-*/
+// AddCartReq 新增商品到购物车
 type AddCartReq struct {
 	g.Meta        `path:"shop-cart" tag:"商品" method:"post" summary:"添加购物车商品"`
 	Authorization string `json:"Authorization" in:"header"  dc:"Authorization"`
@@ -44,9 +38,7 @@ type AddCartReq struct {
 type AddCartRes struct {
 }
 
-/**
-修改购物车中商品数量
-*/
+// UpdateCartReq 修改购物车中商品数量
 type UpdateCartReq struct {
 	g.Meta        `path:"shop-cart" tag:"商品" method:"put" summary:"修改购物车中商品数量"`
 	Authorization string `json:"Authorization" in:"header"  dc:"Authorization"`
@@ -57,9 +49,7 @@ type UpdateCartReq struct {
 type UpdateCartRes struct {
 }
 
-/**
-购物车结算
-*/
+// CartSettleReq 购物车结算
 type CartSettleReq struct {
 	g.Meta      `path:"shop-cart/settle" tag:"商品" method:"get" summary:"购物车结算"`
 	CartItemIds string `json:"cartItemIds" v:"required" in:"query" dc:"购物车ID，多个使用','分割"`

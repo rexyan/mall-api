@@ -16,7 +16,7 @@ import (
 
 var authService *jwt.GfJWTMiddleware
 
-// 权限包管理
+// Auth 权限包管理
 func Auth() *jwt.GfJWTMiddleware {
 	return authService
 }
@@ -55,7 +55,7 @@ func init() {
 	authService = auth
 }
 
-// 向webtoken添加额外的有效负载数据。
+// PayloadFunc 向webtoken添加额外的有效负载数据。
 func PayloadFunc(data interface{}) jwt.MapClaims {
 	claims := jwt.MapClaims{}
 	// params := data.(map[string]interface{})
@@ -68,7 +68,7 @@ func PayloadFunc(data interface{}) jwt.MapClaims {
 	return claims
 }
 
-// 标识
+// IdentityHandler 标识
 func IdentityHandler(ctx context.Context) interface{} {
 	claims := jwt.ExtractClaims(ctx)
 	return claims[authService.IdentityKey]
@@ -83,7 +83,7 @@ func Unauthorized(ctx context.Context, code int, message string) {
 	r.ExitAll()
 }
 
-// 用户标识  私有载荷
+// Authenticator 用户标识  私有载荷
 func Authenticator(ctx context.Context) (interface{}, error) {
 	var (
 		r  = g.RequestFromCtx(ctx)
@@ -118,7 +118,7 @@ func (s *middlewareService) Auth(r *ghttp.Request) {
 
 type DefaultHandlerRes struct {
 	ResultCode int         `json:"resultCode"    dc:"Error code"`
-	Message    string      `json:"message" dc:"Error message" d:""`
+	Message    string      `json:"message" dc:"Error message" d:"success"`
 	Data       interface{} `json:"data"    dc:"Result data for certain request according API definition"`
 }
 

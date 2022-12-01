@@ -18,7 +18,7 @@ type GoodsItem struct {
 	Tag           string `json:"tag"`
 }
 
-// 首页
+// IndexInfosReq 首页
 type IndexInfosReq struct {
 	g.Meta `path:"index-infos" tags:"首页" method:"get" summary:"首页信息"`
 }
@@ -29,4 +29,3 @@ type IndexInfosRes struct {
 	IndexNewGoods       []GoodsItem         `json:"newGoodses"`
 	IndexRecommendGoods []GoodsItem         `json:"recommendGoodses"`
 }
-

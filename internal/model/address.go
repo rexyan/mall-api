@@ -1,24 +1,6 @@
-package v1
+package model
 
-import "github.com/gogf/gf/v2/frame/g"
-
-// DefaultAddressReq 默认地址
-type DefaultAddressReq struct {
-	g.Meta `path:"address/default" tag:"地址" method:"get" summary:"默认配送地址"`
-}
-
-// UserAllAddressReq 所有地址
-type UserAllAddressReq struct {
-	g.Meta `path:"address" tag:"地址" method:"get" summary:"所有配送地址"`
-}
-
-// AddressDetailReq 地址详情
-type AddressDetailReq struct {
-	g.Meta    `path:"address/:addressId" tag:"地址" method:"get" summary:"配送地址详情"`
-	AddressId string `json:"addressId" in:"path"`
-}
-
-type AddressRes struct {
+type AddressOutputItem struct {
 	AddressId     int    `json:"addressId"`
 	CityName      string `json:"cityName"`
 	CreateTime    string `json:"createTime"`
@@ -33,9 +15,7 @@ type AddressRes struct {
 	UserPhone     string `json:"userPhone"`
 }
 
-// AddAddressReq 新增地址
-type AddAddressReq struct {
-	g.Meta        `path:"address" tag:"地址" method:"post" summary:"新增地址"`
+type AddAddressInput struct {
 	CityName      string `json:"cityName"`
 	DefaultFlag   int    `json:"defaultFlag" d:"0"`
 	DetailAddress string `json:"detailAddress"`
@@ -43,7 +23,4 @@ type AddAddressReq struct {
 	RegionName    string `json:"regionName"`
 	UserName      string `json:"userName"`
 	UserPhone     string `json:"userPhone"`
-}
-
-type AddAddressRes struct {
 }
