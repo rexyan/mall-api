@@ -24,7 +24,7 @@ func (c *cIndex) IndexInfos(ctx context.Context, req *v1.IndexInfosReq) (res *v1
 	if err != nil {
 		return nil, err
 	}
-	if err := gconv.Scan(IndexCarouselItem, &carousels); err != nil {
+	if err := gconv.Structs(carousels, IndexCarouselItem); err != nil {
 		return nil, err
 	}
 
@@ -32,7 +32,7 @@ func (c *cIndex) IndexInfos(ctx context.Context, req *v1.IndexInfosReq) (res *v1
 	if err != nil {
 		return nil, err
 	}
-	if err := gconv.Scan(IndexHotGoods, &hotGoods); err != nil {
+	if err := gconv.Structs(hotGoods, IndexHotGoods); err != nil {
 		return nil, err
 	}
 
@@ -40,7 +40,7 @@ func (c *cIndex) IndexInfos(ctx context.Context, req *v1.IndexInfosReq) (res *v1
 	if err != nil {
 		return nil, err
 	}
-	if err := gconv.Scan(IndexNewGoods, &newGoods); err != nil {
+	if err := gconv.Structs(newGoods, IndexNewGoods); err != nil {
 		return nil, err
 	}
 
@@ -48,7 +48,7 @@ func (c *cIndex) IndexInfos(ctx context.Context, req *v1.IndexInfosReq) (res *v1
 	if err != nil {
 		return nil, err
 	}
-	if err := gconv.Scan(IndexRecommendGoods, &recommendGoods); err != nil {
+	if err := gconv.Structs(recommendGoods, IndexRecommendGoods); err != nil {
 		return nil, err
 	}
 

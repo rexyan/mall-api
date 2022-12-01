@@ -20,7 +20,7 @@ func (c *cUser) Login(ctx context.Context, req *v1.UserLoginReq) (res v1.UserLog
 		return res, err
 	}
 	tokenString, _ := utility.Auth().LoginHandler(ctx)
-	res = v1.UserLoginRes(tokenString)
+	res = v1.UserLoginRes("Bearer " + tokenString)
 	return
 }
 

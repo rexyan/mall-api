@@ -32,12 +32,13 @@ var (
 				group.Group("", func(group *ghttp.RouterGroup) {
 					group.Middleware(utility.Middleware().Auth)
 					group.Bind(
-						controller.Goods,   // 商品
-						controller.Cart,    // 购物车
-						controller.Address, // 订单地址
-						controller.Order,   // 订单
-						controller.Search,  // 查询
-						controller.User,    // 用户
+						controller.Goods,               // 商品
+						controller.Cart,                // 购物车
+						controller.Address,             // 订单地址
+						controller.Order,               // 订单
+						controller.Search,              // 查询
+						controller.User.GetUserInfo,    // 用户
+						controller.User.UpdateUserInfo, // 用户
 					)
 				})
 			})
