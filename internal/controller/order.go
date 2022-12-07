@@ -39,7 +39,7 @@ func (c *cOrder) GetOrderByUser(ctx context.Context, req *v1.OrderListReq) (res 
 	if err != nil {
 		return nil, err
 	}
-	if err := gconv.Structs(res, &order); err != nil {
+	if err := gconv.Structs(order, &res); err != nil {
 		return nil, err
 	}
 	return
@@ -51,7 +51,7 @@ func (c *cOrder) GetOrderDetail(ctx context.Context, req *v1.OrderDetailReq) (re
 	if err != nil {
 		return nil, err
 	}
-	if err := gconv.Structs(res, &orderDetail); err != nil {
+	if err := gconv.Structs(orderDetail, &res); err != nil {
 		return nil, err
 	}
 	return
@@ -60,12 +60,9 @@ func (c *cOrder) GetOrderDetail(ctx context.Context, req *v1.OrderDetailReq) (re
 // PayOrder 订单支付
 func (c *cOrder) PayOrder(ctx context.Context, req *v1.PayOrderReq) (res *v1.PayOrderRes, err error) {
 	fmt.Println(req)
-	order, err := service.Order().PayOrder(ctx, req.OrderNo["data"], req.PayType)
+	_, err = service.Order().PayOrder(ctx, req.OrderNo["data"], req.PayType)
 	if err != nil {
 		return nil, err
 	}
-	if err := gconv.Structs(res, &order); err != nil {
-		return nil, err
-	}
-	return
+	return &v1.PayOrderRes{}, nil
 }

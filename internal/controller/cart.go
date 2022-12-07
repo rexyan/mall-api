@@ -14,7 +14,7 @@ var Cart = cCart{}
 type cCart struct{}
 
 // GetShopCart 获取购物车列表
-func (c *cCart) GetShopCart(ctx context.Context, req *v1.GetCartReq) (res *[]v1.GetCartRes, err error) {
+func (c *cCart) GetShopCart(ctx context.Context, req *v1.GetCartReq) (res []*v1.GetCartRes, err error) {
 	userId := gconv.Int(utility.Auth().GetIdentity(ctx))
 	userCart, err := service.Cart().GetUserCart(ctx, userId)
 	if err != nil {
@@ -36,27 +36,21 @@ func (c *cCart) DelShopCart(ctx context.Context, req *v1.DelCartReq) (res *v1.De
 // AddShopCart 新增商品到购物车
 func (c *cCart) AddShopCart(ctx context.Context, req *v1.AddCartReq) (res *v1.AddCartRes, err error) {
 	userId := gconv.Int(utility.Auth().GetIdentity(ctx))
-	shopCart, err := service.Cart().AddShopCart(ctx, userId, req.GoodsId, req.GoodsCount)
+	_, err = service.Cart().AddShopCart(ctx, userId, req.GoodsId, req.GoodsCount)
 	if err != nil {
 		return nil, err
 	}
-	if err := gconv.Structs(shopCart, &res); err != nil {
-		return nil, err
-	}
-	return
+	return &v1.AddCartRes{}, nil
 }
 
 // UpdateShopCart 修改购物车中商品数量
 func (c *cCart) UpdateShopCart(ctx context.Context, req *v1.UpdateCartReq) (res *v1.UpdateCartRes, err error) {
 	userId := gconv.Int(utility.Auth().GetIdentity(ctx))
-	shopCart, err := service.Cart().UpdateShopCart(ctx, userId, req.CartItemId, req.GoodsCount)
+	_, err = service.Cart().UpdateShopCart(ctx, userId, req.CartItemId, req.GoodsCount)
 	if err != nil {
 		return nil, err
 	}
-	if err := gconv.Structs(shopCart, &res); err != nil {
-		return nil, err
-	}
-	return
+	return &v1.UpdateCartRes{}, nil
 }
 
 // CartSettle 购物车结算

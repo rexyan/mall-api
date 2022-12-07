@@ -39,7 +39,7 @@ func (c *cAddress) AddressDetail(ctx context.Context, req *v1.AddressDetailReq) 
 }
 
 // GetUserAllAddress 获取用户所有地址
-func (c *cAddress) GetUserAllAddress(ctx context.Context, req *v1.UserAllAddressReq) (res *[]v1.AddressRes, err error) {
+func (c *cAddress) GetUserAllAddress(ctx context.Context, req *v1.UserAllAddressReq) (res []*v1.AddressRes, err error) {
 	userId := gconv.String(utility.Auth().GetIdentity(ctx))
 	address, err := service.Address().GetUserAllAddress(ctx, userId)
 	if err != nil {
