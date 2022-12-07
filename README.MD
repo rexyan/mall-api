@@ -1,9 +1,31 @@
-# GoFrame Template For SingleRepo
+###  GoFrame 新峰商城后端 
 
-Project Makefile Commands: 
-- `make cli`: Install or Update to the latest GoFrame CLI tool.
-- `make dao`: Generate go files for `Entity/DAO/DO` according to the configuration file from `hack` folder.
-- `make service`: Parse `logic` folder to generate interface go files into `service` folder.
-- `make image TAG=xxx`: Run `docker build` to build image according `manifest/docker`.
-- `make image.push TAG=xxx`: Run `docker build` and `docker push` to build and push image according `manifest/docker`.
-- `make deploy TAG=xxx`: Run `kustomize build` to build and deploy deployment to kubernetes server group according `manifest/deploy`.
+#### 接口列表:
+1. [x] 所有配送地址 
+2. [x] 新增配送地址
+3. [x] 配送地址详情 
+4. [x] 默认配送地址 
+5. [x] 商品分类 
+6. [x] 商品详情 
+7. [x] 购物车商品 
+8. [x] 添加购物车 
+9. [x] 修改购物车中商品数量 
+10. [x] 删除购物车商品
+11. [x] 购物车结算 
+12. [x] 首页信息 
+13. [x] 用户订单查询 
+14. [x] 查询订单详情 
+15. [x] 订单支付
+16. [x] 购物车下单 
+17. [x] 首页商品查询 
+18. [x] 修改用户信息 
+19. [x] 用户登录
+
+
+#### 预览
+![](https://raw.githubusercontent.com/rexyan/warehouse/master/20221207171036.png)  ![](https://raw.githubusercontent.com/rexyan/warehouse/master/20221207171203.png)
+
+![](https://raw.githubusercontent.com/rexyan/warehouse/master/20221207171250.png)  ![](https://raw.githubusercontent.com/rexyan/warehouse/master/20221207171316.png)
+
+
+

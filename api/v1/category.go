@@ -10,7 +10,7 @@ type CategoryItem struct {
 }
 
 type CategoryReq struct {
-	g.Meta        `path:"categories" tags:"分类" method:"get" summary:"分类"`
+	g.Meta        `path:"categories" tags:"商品分类" method:"get" summary:"分类"`
 	Authorization string `json:"Authorization" in:"header"  dc:"Authorization"`
 }
 

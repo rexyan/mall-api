@@ -4,17 +4,17 @@ import "github.com/gogf/gf/v2/frame/g"
 
 // DefaultAddressReq 默认地址
 type DefaultAddressReq struct {
-	g.Meta `path:"address/default" tag:"地址" method:"get" summary:"默认配送地址"`
+	g.Meta `path:"address/default" tags:"地址" method:"get" summary:"默认配送地址"`
 }
 
 // UserAllAddressReq 所有地址
 type UserAllAddressReq struct {
-	g.Meta `path:"address" tag:"地址" method:"get" summary:"所有配送地址"`
+	g.Meta `path:"address" tags:"地址" method:"get" summary:"所有配送地址"`
 }
 
 // AddressDetailReq 地址详情
 type AddressDetailReq struct {
-	g.Meta    `path:"address/:addressId" tag:"地址" method:"get" summary:"配送地址详情"`
+	g.Meta    `path:"address/:addressId" tags:"地址" method:"get" summary:"配送地址详情"`
 	AddressId string `json:"addressId" in:"path"`
 }
 
@@ -35,7 +35,7 @@ type AddressRes struct {
 
 // AddAddressReq 新增地址
 type AddAddressReq struct {
-	g.Meta        `path:"address" tag:"地址" method:"post" summary:"新增地址"`
+	g.Meta        `path:"address" tags:"地址" method:"post" summary:"新增配送地址"`
 	CityName      string `json:"cityName"`
 	DefaultFlag   int    `json:"defaultFlag" d:"0"`
 	DetailAddress string `json:"detailAddress"`
