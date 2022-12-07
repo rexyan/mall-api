@@ -28,3 +28,11 @@ type GetCartOutput struct {
 	GoodsName     string `json:"goodsName"`
 	SellingPrice  int    `json:"sellingPrice"`
 }
+
+type GetUserCartFields struct {
+	CartItemId    int    `json:"cartItemId"`
+	GoodsCount    int    `json:"goodsCount"`
+	GoodsCoverImg string `json:"goodsCoverImg"`
+	GoodsName     string `json:"goodsName"`
+	SellingPrice  int    `json:"sellingPrice"`
+}

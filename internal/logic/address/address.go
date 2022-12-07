@@ -34,7 +34,7 @@ func (s *sAddress) GetUserDefaultAddress(ctx context.Context, userId string) (*m
 
 func (s *sAddress) GetUserAllAddress(ctx context.Context, userId string) (*[]model.AddressOutputItem, error) {
 	var res []model.AddressOutputItem
-	err := dao.UserAddress.Ctx(ctx).Where("user_id=?", userId).Scan(&res)
+	err := dao.UserAddress.Ctx(ctx).Where(dao.UserAddress.Columns().UserId, userId).Scan(&res)
 	if err != nil {
 		return nil, err
 	}
@@ -43,7 +43,7 @@ func (s *sAddress) GetUserAllAddress(ctx context.Context, userId string) (*[]mod
 
 func (s *sAddress) GetAddressById(ctx context.Context, addressId string) (*model.AddressOutputItem, error) {
 	var res model.AddressOutputItem
-	err := dao.UserAddress.Ctx(ctx).Where("address_id=?", addressId).Scan(&res)
+	err := dao.UserAddress.Ctx(ctx).Where(dao.UserAddress.Columns().AddressId, addressId).Scan(&res)
 	if err != nil {
 		return nil, err
 	}
