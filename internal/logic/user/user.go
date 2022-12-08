@@ -24,12 +24,12 @@ func New() *sUser {
 }
 
 func (s *sUser) Login(ctx context.Context, username string, password string) (err error) {
-	record, err := g.Model("tb_newbee_mall_user").Where(g.Map{
-		"login_name":   username,
-		"password_md5": password,
-		"is_deleted":   0,
-	}).One()
-
+	userCls := dao.User.Columns()
+	record, err := dao.User.Ctx(ctx).
+		Where(userCls.LoginName, username).
+		Where(userCls.PasswordMd5, password).
+		Where(userCls.IsDeleted, 0).
+		One()
 	if err != nil && g.IsNil(record) {
 		return err
 	}
@@ -37,24 +37,22 @@ func (s *sUser) Login(ctx context.Context, username string, password string) (er
 }
 
 func (s *sUser) CheckUserPassword(ctx context.Context, username string, password string) (user *entity.User) {
-	var u *entity.User
-	err := g.Model("tb_newbee_mall_user").Where(g.Map{
-		"login_name":   username,
-		"password_md5": password,
-		"is_deleted":   0,
-	}).Scan(&u)
-
+	userCls := dao.User.Columns()
+	err := dao.User.Ctx(ctx).
+		Where(userCls.LoginName, username).
+		Where(userCls.PasswordMd5, password).
+		Where(userCls.IsDeleted, 0).
+		Scan(&user)
 	if err != nil {
-		g.Log("xxx")
 		return nil
 	}
-	return u
+	return
 }
 
 // GetUserById 获取用户
 func (s *sUser) GetUserById(ctx context.Context, userId string) *entity.User {
 	var user *entity.User
-	err := dao.User.Ctx(ctx).Where("user_id", userId).Scan(&user)
+	err := dao.User.Ctx(ctx).Where(dao.User.Columns().UserId, userId).Scan(&user)
 	if err != nil {
 		return nil
 	}
@@ -77,10 +75,11 @@ func (s *sUser) GetUserInfo(ctx context.Context, userId string) (*v1.UserInfoRes
 
 // UpdateUserInfo 我的-修改账户信息
 func (s *sUser) UpdateUserInfo(ctx context.Context, userId, nickName, introduceSign string) (bool, error) {
+	userCls := dao.User.Columns()
 	_, err := dao.User.Ctx(ctx).Data(g.Map{
-		"nick_name":      nickName,
-		"introduce_sign": introduceSign,
-	}).Where("user_id", userId).Update()
+		userCls.NickName:      nickName,
+		userCls.IntroduceSign: introduceSign,
+	}).Where(userCls.UserId, userId).Update()
 	if err != nil {
 		return false, err
 	}

@@ -24,8 +24,9 @@ func (s *sSearch) IndexSearch(ctx context.Context, keyword string, categoryId in
 	var IndexSearchGoodsInfo model.IndexSearchOutput
 	IndexSearchGoodsInfo.List = make([]model.SearchGoodsItem, 0)
 
+	goodsInfoCls := dao.GoodsInfo.Columns()
 	// 排序
-	orderByCol := "create_time"
+	orderByCol := goodsInfoCls.CreateTime
 	if orderBy == "price" {
 		orderByCol = "selling_price"
 	}
@@ -34,7 +35,7 @@ func (s *sSearch) IndexSearch(ctx context.Context, keyword string, categoryId in
 		"goods_name like '%?%'": keyword,
 	}
 	if categoryId >= 0 {
-		condition["goods_category_id"] = categoryId
+		condition[goodsInfoCls.GoodsCategoryId] = categoryId
 	}
 
 	query := dao.GoodsInfo.Ctx(ctx).Where(condition).OrderDesc(orderByCol)

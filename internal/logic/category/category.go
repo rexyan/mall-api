@@ -24,7 +24,7 @@ func New() *sCategory {
 // GetCategoryByParentId 根据 ParentId 获取 Category 信息
 func (s *sCategory) GetCategoryByParentId(ctx context.Context, parentId int) (*[]entity.GoodsCategory, error) {
 	var goodsCategory []entity.GoodsCategory
-	err := dao.GoodsCategory.Ctx(ctx).Where("parent_id", parentId).Scan(&goodsCategory)
+	err := dao.GoodsCategory.Ctx(ctx).Where(dao.GoodsCategory.Columns().ParentId, parentId).Scan(&goodsCategory)
 	if err != nil {
 		return nil, err
 	}
@@ -34,7 +34,7 @@ func (s *sCategory) GetCategoryByParentId(ctx context.Context, parentId int) (*[
 // GetCategoryById 根据 ID 获取 Category 信息
 func (s *sCategory) GetCategoryById(ctx context.Context, categoryId int) (*entity.GoodsCategory, error) {
 	var goodsCategory entity.GoodsCategory
-	err := dao.GoodsCategory.Ctx(ctx).Where("category_id", categoryId).Scan(&goodsCategory)
+	err := dao.GoodsCategory.Ctx(ctx).Where(dao.GoodsCategory.Columns().CategoryId, categoryId).Scan(&goodsCategory)
 	if err != nil {
 		return nil, err
 	}
@@ -44,7 +44,7 @@ func (s *sCategory) GetCategoryById(ctx context.Context, categoryId int) (*entit
 // GetCategoryByLevel 根据 Level 获取 Category 信息
 func (s *sCategory) GetCategoryByLevel(ctx context.Context, categoryLevel int) (*[]entity.GoodsCategory, error) {
 	var goodsCategory []entity.GoodsCategory
-	err := dao.GoodsCategory.Ctx(ctx).Where("category_level", categoryLevel).Scan(&goodsCategory)
+	err := dao.GoodsCategory.Ctx(ctx).Where(dao.GoodsCategory.Columns().CategoryLevel, categoryLevel).Scan(&goodsCategory)
 	if err != nil {
 		return nil, err
 	}

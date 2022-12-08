@@ -3,7 +3,6 @@ package goods
 import (
 	"context"
 	"github.com/gogf/gf/v2/errors/gerror"
-	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/util/gconv"
 	"mall-api/internal/dao"
 	"mall-api/internal/model"
@@ -26,7 +25,7 @@ func New() *sGoods {
 // Detail 获取商品详情
 func (s *sGoods) Detail(ctx context.Context, goodId string) (*model.GoodsDetailOutput, error) {
 	var goodsInfo *entity.GoodsInfo
-	err := dao.GoodsInfo.Ctx(ctx).Where(g.Map{"goods_id": goodId}).Scan(&goodsInfo)
+	err := dao.GoodsInfo.Ctx(ctx).Where(dao.GoodsInfo.Columns().GoodsId, goodId).Scan(&goodsInfo)
 	if err != nil {
 		return nil, err
 	}

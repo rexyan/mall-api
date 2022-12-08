@@ -66,15 +66,18 @@ func (s *sOrder) SaveOrder(ctx context.Context, userId string, addressId int, ca
 			totalPrice += goodsInfo.SellingPrice * goodsInfo.GoodsCount
 		}
 
+		// 订单字段
+		orderCls := dao.Order.Columns()
+
 		// 生成订单
 		order, err := tx.Ctx(ctx).Insert("tb_newbee_mall_order", g.Map{
-			"order_no":     orderNo,
-			"user_id":      userId,
-			"total_price":  totalPrice,
-			"pay_status":   0, // 支付状态:0.未支付,1.支付成功,-1:支付失败
-			"pay_type":     0, // 0.无 1.支付宝支付 2.微信支付
-			"order_status": 0, // 订单状态:0.待支付 1.已支付 2.配货完成 3:出库成功 4.交易成功 -1.手动关闭 -2.超时关闭 -3.商家关闭
-			"extra_info":   "",
+			orderCls.OrderNo:     orderNo,
+			orderCls.UserId:      userId,
+			orderCls.TotalPrice:  totalPrice,
+			orderCls.PayStatus:   0, // 支付状态:0.未支付,1.支付成功,-1:支付失败
+			orderCls.PayType:     0, // 0.无 1.支付宝支付 2.微信支付
+			orderCls.OrderStatus: 0, // 订单状态:0.待支付 1.已支付 2.配货完成 3:出库成功 4.交易成功 -1.手动关闭 -2.超时关闭 -3.商家关闭
+			orderCls.ExtraInfo:   "",
 		})
 		if err != nil {
 			return err
@@ -86,29 +89,35 @@ func (s *sOrder) SaveOrder(ctx context.Context, userId string, addressId int, ca
 			return err
 		}
 
+		// 订单地址字段
+		orderAddressCls := dao.OrderAddress.Columns()
+
 		// 订单关联地址
 		_, err = tx.Ctx(ctx).Insert("tb_newbee_mall_order_address", g.Map{
-			"order_id":       orderId,
-			"user_name":      address.UserName,
-			"user_phone":     address.UserPhone,
-			"province_name":  address.ProvinceName,
-			"city_name":      address.CityName,
-			"region_name":    address.RegionName,
-			"detail_address": address.DetailAddress,
+			orderAddressCls.OrderId:       orderId,
+			orderAddressCls.UserName:      address.UserName,
+			orderAddressCls.UserPhone:     address.UserPhone,
+			orderAddressCls.ProvinceName:  address.ProvinceName,
+			orderAddressCls.CityName:      address.CityName,
+			orderAddressCls.RegionName:    address.RegionName,
+			orderAddressCls.DetailAddress: address.DetailAddress,
 		})
 		if err != nil {
 			return err
 		}
 
+		// 订单地址字段
+		orderItemCls := dao.OrderItem.Columns()
+
 		// 订单商品快照
 		for _, goodsInfo := range *orderGoodsInfos {
 			_, err = tx.Ctx(ctx).Insert("tb_newbee_mall_order_item", g.Map{
-				"order_id":        orderId,
-				"goods_id":        goodsInfo.GoodsId,
-				"goods_name":      goodsInfo.GoodsName,
-				"goods_cover_img": goodsInfo.GoodsCoverImg,
-				"selling_price":   goodsInfo.SellingPrice,
-				"goods_count":     goodsInfo.GoodsCount,
+				orderItemCls.OrderId:       orderId,
+				orderItemCls.GoodsId:       goodsInfo.GoodsId,
+				orderItemCls.GoodsName:     goodsInfo.GoodsName,
+				orderItemCls.GoodsCoverImg: goodsInfo.GoodsCoverImg,
+				orderItemCls.SellingPrice:  goodsInfo.SellingPrice,
+				orderItemCls.GoodsCount:    goodsInfo.GoodsCount,
 			})
 			if err != nil {
 				return err
@@ -134,7 +143,7 @@ func (s *sOrder) SaveOrder(ctx context.Context, userId string, addressId int, ca
 // GetOrderGoodsSnapshotById 查询订单中的商品快照信息
 func (s *sOrder) GetOrderGoodsSnapshotById(ctx context.Context, orderId int) ([]model.GetCartOutput, error) {
 	var snapshot []model.GetCartOutput
-	err := dao.OrderItem.Ctx(ctx).Where("order_id", orderId).Scan(&snapshot)
+	err := dao.OrderItem.Ctx(ctx).Where(dao.OrderItem.Columns().OrderId, orderId).Scan(&snapshot)
 	if err != nil {
 		return nil, err
 	}
@@ -144,7 +153,7 @@ func (s *sOrder) GetOrderGoodsSnapshotById(ctx context.Context, orderId int) ([]
 // GetOrderIdByNo 查询订单中的商品快照信息
 func (s *sOrder) GetOrderIdByNo(ctx context.Context, orderNo string) (orderId int, err error) {
 	var order *entity.Order
-	err = dao.Order.Ctx(ctx).Where("order_no", orderNo).Scan(&order)
+	err = dao.Order.Ctx(ctx).Where(dao.Order.Columns().OrderNo, orderNo).Scan(&order)
 	if err != nil {
 		return 0, err
 	}
@@ -161,10 +170,10 @@ func (s *sOrder) GetOrderByUser(ctx context.Context, userId string, orderStatus 
 
 	r := g.RequestFromCtx(ctx)
 	condition := map[string]interface{}{
-		"user_id": userId,
+		dao.User.Columns().UserId: userId,
 	}
 	if orderStatus >= 0 {
-		condition["order_status"] = orderStatus
+		condition[dao.Order.Columns().OrderStatus] = orderStatus
 	}
 	query := dao.Order.Ctx(ctx).Where(condition)
 	// 总数
@@ -207,9 +216,9 @@ func (s *sOrder) GetOrderDetail(ctx context.Context, orderNo string) (*model.Ord
 	}
 	// 查询订单商品快照信息
 	snapshot, err := service.Order().GetOrderGoodsSnapshotById(ctx, orderId)
-	err = dao.Order.Ctx(ctx).Where(g.Map{
-		"order_no": orderNo,
-	}).Scan(&orderDetail)
+	err = dao.Order.Ctx(ctx).
+		Where(dao.Order.Columns().OrderNo, orderNo).
+		Scan(&orderDetail)
 	if err == nil {
 		for _, s := range snapshot {
 			orderDetail.NewBeeMallOrderItemVOS = append(orderDetail.NewBeeMallOrderItemVOS, s)
@@ -227,12 +236,13 @@ func (s *sOrder) PayOrder(ctx context.Context, orderNo string, payType string) (
 	if order.OrderStatus != 0 {
 		return nil, gerror.New("order status error!")
 	}
+	orderCls := dao.Order.Columns()
 	_, err = dao.Order.Ctx(ctx).Data(g.Map{
-		"pay_type":     gconv.Int(payType),
-		"pay_status":   1, // 支付成功
-		"pay_time":     gtime.Datetime(),
-		"order_status": 1, // 已支付
-	}).Where("order_no", orderNo).Update()
+		orderCls.PayType:     gconv.Int(payType),
+		orderCls.PayStatus:   1, // 支付成功
+		orderCls.PayTime:     gtime.Datetime(),
+		orderCls.OrderStatus: 1, // 已支付
+	}).Where(orderCls.OrderNo, orderNo).Update()
 	if err != nil {
 		return nil, err
 	}

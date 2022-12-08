@@ -34,9 +34,11 @@ func (s *sIndex) GetCarousels(ctx context.Context) ([]model.IndexCarouselItemOut
 func (s *sIndex) GetIndexGoods(ctx context.Context, indexGoodsType int) ([]model.GoodsItemOutput, error) {
 	var goods []model.GoodsItemOutput
 
-	err := g.Model("tb_newbee_mall_index_config index_config").InnerJoin("tb_newbee_mall_goods_info goods", "index_config.goods_id=goods.goods_id").Fields(
-		"goods.*",
-	).Where(g.Map{"index_config.config_type": indexGoodsType}).Scan(&goods)
+	err := g.Model("tb_newbee_mall_index_config index_config").
+		InnerJoin("tb_newbee_mall_goods_info goods", "index_config.goods_id=goods.goods_id").
+		Fields("goods.*").
+		Where(g.Map{"index_config.config_type": indexGoodsType}).
+		Scan(&goods)
 	if err != nil {
 		return nil, err
 	}
