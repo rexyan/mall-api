@@ -26,9 +26,12 @@ func New() *sCart {
 func (s *sCart) GetUserCart(ctx context.Context, userId int) (*[]model.UserCartOutput, error) {
 	var cartRes = make([]model.UserCartOutput, 0)
 
-	err := g.Model("tb_newbee_mall_shopping_cart_item cart").InnerJoin("tb_newbee_mall_goods_info goods", "cart.goods_id=goods.goods_id").Fields(
-		"cart.cart_item_id,cart.goods_count,goods.goods_cover_img,goods.goods_name,goods.selling_price",
-	).Where(g.Map{"cart.is_deleted": 0, "cart.user_id": userId}).Scan(&cartRes)
+	err :=
+		g.Model("tb_newbee_mall_shopping_cart_item cart").
+			InnerJoin("tb_newbee_mall_goods_info goods", "cart.goods_id=goods.goods_id").
+			Fields("cart.cart_item_id,cart.goods_count,goods.goods_cover_img,goods.goods_name,goods.selling_price").
+			Where(g.Map{"cart.is_deleted": 0, "cart.user_id": userId}).
+			Scan(&cartRes)
 	if err != nil {
 		return nil, err
 	}
@@ -37,7 +40,13 @@ func (s *sCart) GetUserCart(ctx context.Context, userId int) (*[]model.UserCartO
 
 // DelShopCart 删除购物车中商品
 func (s *sCart) DelShopCart(ctx context.Context, userId int, cartId string) bool {
-	_, err := g.Model("tb_newbee_mall_shopping_cart_item").Data(g.Map{"is_deleted": 1}).Where(g.Map{"is_deleted": 0, "cart_item_id": cartId, "user_id": userId}).Update()
+	shoppingCartItemCls := dao.ShoppingCartItem.Columns()
+	_, err := dao.ShoppingCartItem.Ctx(ctx).
+		Data(shoppingCartItemCls.IsDeleted, 1).
+		Where(shoppingCartItemCls.UserId, userId).
+		Where(shoppingCartItemCls.IsDeleted, 0).
+		Where(shoppingCartItemCls.CartItemId, cartId).
+		Update()
 	if err != nil {
 		return false
 	}
@@ -52,14 +61,25 @@ func (s *sCart) AddShopCart(ctx context.Context, userId int, goodsId int, goodsC
 		return nil, err
 	}
 	// 判断商品是否已在购物车中
-	exists, err := g.Model("tb_newbee_mall_shopping_cart_item").Where(g.Map{"is_deleted": 0, "goods_id": goodsId, "user_id": userId}).One()
+	shoppingCartItemCls := dao.ShoppingCartItem.Columns()
+	exists, err := dao.ShoppingCartItem.Ctx(ctx).
+		Where(shoppingCartItemCls.IsDeleted, 0).
+		Where(shoppingCartItemCls.GoodsId, goodsId).
+		Where(shoppingCartItemCls.UserId, userId).
+		One()
 	if err != nil {
 		return nil, err
 	}
 	if exists != nil {
 		return nil, gerror.New("商品已在购物车中")
 	}
-	_, err = dao.ShoppingCartItem.Ctx(ctx).Insert(g.Map{"user_id": userId, "goods_id": goodsId, "goods_count": goodsCount})
+	_, err = dao.ShoppingCartItem.Ctx(ctx).
+		Data(g.Map{
+			shoppingCartItemCls.UserId:     userId,
+			shoppingCartItemCls.GoodsId:    goodsId,
+			shoppingCartItemCls.GoodsCount: goodsCount,
+		}).
+		Insert()
 	if err != nil {
 		return nil, err
 	}
@@ -68,7 +88,13 @@ func (s *sCart) AddShopCart(ctx context.Context, userId int, goodsId int, goodsC
 
 // UpdateShopCart 修改购物车中商品数量
 func (s *sCart) UpdateShopCart(ctx context.Context, userId int, cartItemId int, goodsCount int) (*model.UpdateCartOutput, error) {
-	_, err := g.Model("tb_newbee_mall_shopping_cart_item").Data(g.Map{"goods_count": goodsCount}).Where(g.Map{"is_deleted": 0, "cart_item_id": cartItemId, "user_id": userId}).Update()
+	shoppingCartItemCls := dao.ShoppingCartItem.Columns()
+	_, err := dao.ShoppingCartItem.Ctx(ctx).
+		Data(shoppingCartItemCls.GoodsCount, goodsCount).
+		Where(shoppingCartItemCls.IsDeleted, 0).
+		Where(shoppingCartItemCls.CartItemId, cartItemId).
+		Where(shoppingCartItemCls.UserId, userId).
+		Update()
 	if err != nil {
 		return nil, err
 	}
@@ -78,9 +104,11 @@ func (s *sCart) UpdateShopCart(ctx context.Context, userId int, cartItemId int, 
 // GetCartGoodsById 根据购物车ID获取购物商品信息
 func (s *sCart) GetCartGoodsById(ctx context.Context, cartItemId int) (*model.CartSettleOutput, error) {
 	var cartRes model.CartSettleOutput
-	err := g.Model("tb_newbee_mall_shopping_cart_item cart").InnerJoin("tb_newbee_mall_goods_info goods", "cart.goods_id=goods.goods_id").Fields(
-		"cart.cart_item_id,cart.goods_count,goods.goods_id,goods.goods_cover_img,goods.goods_name,goods.selling_price",
-	).Where(g.Map{"cart.is_deleted": 0, "cart.cart_item_id": cartItemId}).Scan(&cartRes)
+	err := g.Model("tb_newbee_mall_shopping_cart_item cart").
+		InnerJoin("tb_newbee_mall_goods_info goods", "cart.goods_id=goods.goods_id").
+		Fields("cart.cart_item_id,cart.goods_count,goods.goods_id,goods.goods_cover_img,goods.goods_name,goods.selling_price").
+		Where(g.Map{"cart.is_deleted": 0, "cart.cart_item_id": cartItemId}).
+		Scan(&cartRes)
 	if err != nil {
 		return nil, err
 	}
