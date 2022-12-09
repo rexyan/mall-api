@@ -10,6 +10,7 @@ import (
 	"github.com/gogf/gf/v2/os/gcmd"
 
 	"mall-api/internal/controller"
+	_ "mall-api/internal/logic"
 )
 
 var (
